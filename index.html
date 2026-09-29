@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yu-Gi-Oh! Card Database</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ---------- Tokens ---------- */
+:root{
+  --bg:#05060f; --bg2:#0a0d1f; --glass:rgba(16,20,45,.55); --glass-strong:rgba(16,20,45,.85);
+  --line:rgba(120,150,255,.18); --text:#e7ebff; --muted:#8a93b8;
+  --blue:#2b6bff; --violet:#8a3dff; --cyan:#19e6ff; --pink:#ff3dcf; --red:#ff4d6d; --green:#31e0a1; --gold:#ffcf5a;
+  --font-head:'Rajdhani',system-ui,sans-serif; --font-body:'Barlow',system-ui,sans-serif;
+  --r-sm:8px; --r:14px; --r-lg:22px;
+  --glow-blue:0 0 18px rgba(43,107,255,.55); --glow-cyan:0 0 18px rgba(25,230,255,.5); --glow-violet:0 0 22px rgba(138,61,255,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.5;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(900px 600px at 10% -10%,rgba(43,107,255,.22),transparent 60%),
+  radial-gradient(800px 500px at 100% 20%,rgba(138,61,255,.22),transparent 60%),
+  radial-gradient(700px 500px at 50% 110%,rgba(25,230,255,.12),transparent 60%),var(--bg)}
+#particles{position:fixed;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none}
+button{font-family:inherit;cursor:pointer;color:inherit;border:0;background:none}
+input,select{font-family:inherit;color:var(--text);background:rgba(8,10,25,.7);border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 12px;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus{border-color:var(--cyan);box-shadow:var(--glow-cyan)}
+select option{background:#0a0d1f}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+h1,h2,h3{font-family:var(--font-head);font-weight:700;letter-spacing:.02em}
+.glass{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:var(--r-lg)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:var(--r-sm);font-family:var(--font-head);font-weight:600;font-size:15px;letter-spacing:.04em;border:1px solid var(--line);background:rgba(20,26,60,.6);transition:transform .15s,box-shadow .2s,border-color .2s,background .2s}
+.btn:hover{border-color:var(--cyan);box-shadow:var(--glow-cyan);transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--violet));border-color:transparent;box-shadow:var(--glow-blue)}
+.btn-primary:hover{box-shadow:var(--glow-violet),var(--glow-blue)}
+.btn-danger{border-color:rgba(255,77,109,.5);color:#ffb3c1}
+.btn-danger:hover{border-color:var(--red);box-shadow:0 0 16px rgba(255,77,109,.5)}
+.btn-sm{padding:6px 11px;font-size:13px}
+
+/* ---------- Header ---------- */
+header{position:sticky;top:0;z-index:50;background:rgba(5,6,15,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.hwrap{max-width:1500px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+.logo-mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--violet));display:grid;place-items:center;box-shadow:var(--glow-violet);position:relative;overflow:hidden}
+.logo-mark::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-100%);animation:shine 4s ease-in-out infinite}
+@keyframes shine{0%,60%{transform:translateX(-100%)}80%,100%{transform:translateX(100%)}}
+.logo-mark svg{width:26px;height:26px}
+.logo h1{font-size:20px;line-height:1;background:linear-gradient(90deg,var(--cyan),#fff 50%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo small{display:block;font-family:var(--font-body);font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.12em;margin-top:3px}
+.search{flex:1;min-width:220px;position:relative}
+.search input{width:100%;padding-left:38px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
+.count{font-family:var(--font-head);font-weight:600;font-size:14px;color:var(--cyan);white-space:nowrap;padding:6px 12px;border:1px solid rgba(25,230,255,.3);border-radius:999px;background:rgba(25,230,255,.06)}
+.count b{color:#fff}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav .btn{padding:8px 14px}
+nav .btn.active{background:linear-gradient(135deg,rgba(43,107,255,.35),rgba(138,61,255,.35));border-color:var(--violet);box-shadow:var(--glow-violet)}
+nav .badge{background:var(--violet);color:#fff;font-size:11px;padding:1px 7px;border-radius:999px}
+
+/* ---------- Layout ---------- */
+main{max-width:1500px;margin:0 auto;padding:20px}
+.view{display:none;animation:fade .3s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.progress{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:14px}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));box-shadow:var(--glow-cyan);transition:width .4s}
+
+/* ---------- Filters ---------- */
+.filters{padding:16px;margin-bottom:18px;display:flex;flex-direction:column;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);font-family:var(--font-head);font-weight:600;font-size:13px;letter-spacing:.04em;background:rgba(20,26,60,.5);transition:all .15s}
+.chip:hover{border-color:var(--cyan)}
+.chip.active{background:linear-gradient(135deg,var(--blue),var(--violet));border-color:transparent;box-shadow:var(--glow-blue);color:#fff}
+.chip[data-attr="DARK"].active{background:#3a1d6e}.chip[data-attr="LIGHT"].active{background:#b89a2a;color:#000}
+.chip[data-attr="EARTH"].active{background:#6b4a26}.chip[data-attr="WATER"].active{background:#1c5fb5}
+.chip[data-attr="FIRE"].active{background:#b5341c}.chip[data-attr="WIND"].active{background:#1f8a5a}
+.chip[data-attr="DIVINE"].active{background:linear-gradient(135deg,#ffcf5a,#ff8a3d);color:#000}
+.frow{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.frow label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+.frow input,.frow select{min-width:110px}
+.frow .btn{margin-left:auto}
+.results{color:var(--muted);font-size:13px;margin-bottom:10px}
+
+/* ---------- Card grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;perspective:1200px}
+.card{position:relative;border-radius:var(--r);background:var(--glass);border:1px solid var(--line);overflow:hidden;cursor:pointer;transform-style:preserve-3d;transition:transform .12s ease-out,box-shadow .25s,border-color .25s;--rx:0deg;--ry:0deg;transform:rotateX(var(--rx)) rotateY(var(--ry))}
+.card:hover{box-shadow:0 18px 40px rgba(0,0,0,.6),0 0 24px var(--frame-glow,rgba(43,107,255,.35));border-color:var(--frame,var(--blue));z-index:2}
+.card img{display:block;width:100%;aspect-ratio:421/614;object-fit:cover;background:#0a0d1f}
+.card .cb{padding:10px 10px 12px;border-top:2px solid var(--frame,var(--blue))}
+.card .cn{font-family:var(--font-head);font-weight:700;font-size:15px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .ct{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.card .cs{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-family:var(--font-head);font-weight:600;font-size:13px}
+.card .cs .lv{color:var(--gold)}.card .cs .atk{color:#ff8a8a}.card .cs .def{color:#8ac4ff}
+.card .own{position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;background:rgba(5,6,15,.75);border:1px solid var(--line);display:grid;place-items:center;font-size:13px;opacity:0;transition:opacity .2s}
+.card:hover .own,.card .own.on{opacity:1}
+.card .own.on{background:var(--green);color:#000;border-color:transparent}
+.card .add{position:absolute;top:8px;right:8px;padding:4px 9px;border-radius:999px;background:rgba(5,6,15,.8);border:1px solid var(--line);font-family:var(--font-head);font-weight:700;font-size:13px;opacity:0;transition:opacity .2s}
+.card:hover .add{opacity:1}
+.card .add:hover{border-color:var(--cyan);color:var(--cyan)}
+.attr{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.05em}
+.attr-DARK{background:#3a1d6e}.attr-LIGHT{background:#b89a2a;color:#000}.attr-EARTH{background:#6b4a26}.attr-WATER{background:#1c5fb5}.attr-FIRE{background:#b5341c}.attr-WIND{background:#1f8a5a}.attr-DIVINE{background:#ffcf5a;color:#000}
+/* frame colors */
+.f-normal{--frame:#e0c27a;--frame-glow:rgba(224,194,122,.4)}.f-effect{--frame:#ff8a3d;--frame-glow:rgba(255,138,61,.4)}
+.f-ritual{--frame:#5aa0ff;--frame-glow:rgba(90,160,255,.4)}.f-fusion{--frame:#b06cff;--frame-glow:rgba(176,108,255,.45)}
+.f-synchro{--frame:#f3f3f3;--frame-glow:rgba(255,255,255,.35)}.f-xyz{--frame:#666;--frame-glow:rgba(200,200,200,.3)}
+.f-link{--frame:#19a0ff;--frame-glow:rgba(25,160,255,.5)}.f-spell{--frame:#2fbf9f;--frame-glow:rgba(47,191,159,.45)}
+.f-trap{--frame:#ff3dcf;--frame-glow:rgba(255,61,207,.45)}.f-pendulum{--frame:#5ee08f;--frame-glow:rgba(94,224,143,.45)}
+.f-token{--frame:#999;--frame-glow:rgba(150,150,150,.3)}.f-skill{--frame:#4c8ce0}
+.sentinel{height:1px}
+.loadmore{display:flex;justify-content:center;padding:24px}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--text);font-family:var(--font-head);font-size:22px;margin-bottom:6px}
+
+/* ---------- Modal ---------- */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(2,3,10,.8);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px;animation:fade .2s}
+.overlay.open{display:flex}
+.modal{width:min(1000px,100%);max-height:92vh;overflow:auto;padding:24px;display:grid;grid-template-columns:320px 1fr;gap:24px;position:relative;animation:pop .3s cubic-bezier(.2,.9,.3,1.3)}
+@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.modal .close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--line);font-size:18px}
+.modal .close:hover{border-color:var(--red);color:var(--red)}
+.modal .mimg{width:100%;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.7),0 0 30px var(--frame-glow,rgba(43,107,255,.3))}
+.alts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.alts img{width:56px;border-radius:6px;cursor:pointer;border:2px solid transparent;opacity:.7;transition:all .15s}
+.alts img.on,.alts img:hover{opacity:1;border-color:var(--cyan)}
+.mbody h2{font-size:30px;line-height:1.05;margin-right:40px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}
+.tag{padding:3px 10px;border-radius:999px;font-size:12px;border:1px solid var(--line);background:rgba(20,26,60,.6)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:14px}
+.stat{padding:10px;border-radius:10px;background:rgba(8,10,25,.6);border:1px solid var(--line);text-align:center}
+.stat span{display:block;font-size:11px;color:var(--muted)}
+.stat b{font-family:var(--font-head);font-size:22px;color:var(--cyan)}
+.desc{padding:14px;border-radius:12px;background:rgba(8,10,25,.6);border-left:3px solid var(--frame,var(--blue));white-space:pre-wrap;line-height:1.6;font-size:14px}
+.pend{margin-top:10px;padding:12px;border-radius:12px;background:rgba(94,224,143,.06);border:1px solid rgba(94,224,143,.3);font-size:13px;white-space:pre-wrap}
+.extra{margin-top:14px;font-size:13px;color:var(--muted)}
+.extra div{padding:4px 0;border-bottom:1px dashed var(--line)}
+.extra b{color:var(--text)}
+.mact{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+
+/* ---------- Deck / Collection ---------- */
+.deck-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:16px;margin-bottom:16px}
+.deck-head h2{font-size:26px;margin-right:auto}
+.dstats{display:flex;gap:14px;font-family:var(--font-head);font-weight:600;font-size:14px}
+.dstats b{color:var(--cyan);font-size:18px}
+.card .qty{position:absolute;bottom:64px;right:8px;background:linear-gradient(135deg,var(--blue),var(--violet));padding:2px 9px;border-radius:999px;font-family:var(--font-head);font-weight:700;font-size:13px;box-shadow:var(--glow-blue)}
+.card .rm{position:absolute;top:8px;right:8px;padding:4px 9px;border-radius:999px;background:rgba(5,6,15,.8);border:1px solid rgba(255,77,109,.5);color:#ffb3c1;font-size:12px;font-weight:600;opacity:0;transition:opacity .2s}
+.card:hover .rm{opacity:1}
+
+/* ---------- Duel ---------- */
+.duel{display:grid;grid-template-columns:1fr 280px;gap:16px}
+.board{padding:16px;position:relative;overflow:hidden}
+.board::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,61,207,.05),transparent 45%,transparent 55%,rgba(25,230,255,.05));pointer-events:none}
+.side{position:relative;z-index:1}
+.side.opp{padding-bottom:14px;border-bottom:1px dashed var(--line);margin-bottom:14px}
+.pinfo{display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap}
+.pname{font-family:var(--font-head);font-weight:700;font-size:18px}
+.lp{font-family:var(--font-head);font-weight:700;font-size:26px;color:var(--cyan);position:relative;min-width:110px}
+.lp.hit{animation:shake .5s}
+.lp.opp{color:var(--pink)}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-4px,2px)}40%{transform:translate(4px,-2px)}60%{transform:translate(-3px,-1px)}80%{transform:translate(3px,1px)}}
+.lpbar{flex:1;min-width:120px;height:8px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}
+.lpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .5s;box-shadow:var(--glow-cyan)}
+.opp .lpbar i{background:linear-gradient(90deg,var(--pink),var(--violet))}
+.pmeta{font-size:12px;color:var(--muted)}
+.zones{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px}
+.zone{aspect-ratio:421/614;border-radius:10px;border:1px dashed rgba(120,150,255,.25);background:rgba(8,10,25,.35);position:relative;display:grid;place-items:center;transition:border-color .2s,box-shadow .2s}
+.zone.target{border:2px solid var(--red);box-shadow:0 0 18px rgba(255,77,109,.6);cursor:crosshair;animation:pulse 1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 30px rgba(255,77,109,.9)}}
+.zone .fc{position:absolute;inset:0;border-radius:10px;overflow:hidden;border:2px solid var(--frame,var(--blue));box-shadow:0 0 14px var(--frame-glow,rgba(43,107,255,.3));cursor:pointer;transition:transform .2s}
+.zone .fc:hover{transform:translateY(-4px)}
+.zone .fc img{width:100%;height:100%;object-fit:cover;display:block}
+.zone .fc.def{transform:rotate(90deg) scale(.7)}
+.zone .fc.def:hover{transform:rotate(90deg) scale(.72)}
+.zone .fc.facedown img{filter:brightness(.25) saturate(0)}
+.zone .fc.facedown::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(138,61,255,.6),rgba(43,107,255,.6))}
+.zone .fc .fs{position:absolute;bottom:0;left:0;right:0;background:rgba(2,3,10,.85);font-family:var(--font-head);font-weight:700;font-size:11px;text-align:center;padding:2px}
+.zone .fc.ready{outline:2px solid var(--cyan);box-shadow:var(--glow-cyan)}
+.zone .fc.selected{outline:3px solid var(--gold);box-shadow:0 0 22px var(--gold)}
+.zone .fc.used{filter:brightness(.6)}
+.zone .fc.summoning{animation:summon .8s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes summon{0%{transform:scale(0) rotateY(180deg);filter:brightness(4)}60%{transform:scale(1.15) rotateY(0);filter:brightness(2)}100%{transform:none;filter:none}}
+.zone .fc.attacking{animation:attack .7s ease-in-out;z-index:20}
+@keyframes attack{0%{transform:none}40%{transform:translate(var(--dx),var(--dy)) scale(1.15)}60%{transform:translate(var(--dx),var(--dy)) scale(1.15)}100%{transform:none}}
+.zone .fc.destroyed{animation:destroy .6s forwards}
+@keyframes destroy{to{transform:scale(0) rotate(30deg);opacity:0;filter:brightness(3)}}
+.zone .zl{font-size:10px;color:rgba(138,147,184,.5);font-family:var(--font-head)}
+.stzones{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.stzones .zone{aspect-ratio:auto;height:44px;border-radius:8px}
+.stzones .fc{border-radius:8px}
+.hand{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;min-height:120px;padding:10px;border-radius:12px;background:rgba(8,10,25,.4);border:1px solid var(--line)}
+.hc{width:84px;border-radius:8px;overflow:hidden;border:2px solid var(--frame,var(--blue));cursor:pointer;transition:transform .2s,box-shadow .2s;position:relative;background:#0a0d1f;animation:drawIn .4s}
+@keyframes drawIn{from{transform:translateY(40px) rotate(-8deg);opacity:0}to{transform:none;opacity:1}}
+.hc:hover{transform:translateY(-10px) scale(1.06);box-shadow:0 0 18px var(--frame-glow,rgba(43,107,255,.4));z-index:2}
+.hc img{width:100%;display:block;aspect-ratio:421/614;object-fit:cover}
+.hc.opp{width:56px;pointer-events:none;background:linear-gradient(135deg,var(--violet),var(--blue))}
+.hc.opp img{visibility:hidden}
+.hc.disabled{opacity:.45;filter:grayscale(.6);cursor:not-allowed}
+.hc.disabled:hover{transform:none}
+.dactions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.phase{font-family:var(--font-head);font-weight:700;letter-spacing:.06em;padding:6px 12px;border-radius:999px;border:1px solid var(--cyan);color:var(--cyan);background:rgba(25,230,255,.06);margin-right:auto}
+.dpanel{padding:16px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 120px);position:sticky;top:90px}
+.dpanel h3{font-size:18px}
+.log{flex:1;overflow:auto;font-size:13px;display:flex;flex-direction:column;gap:5px;min-height:200px}
+.log div{padding:6px 9px;border-radius:8px;background:rgba(8,10,25,.6);border-left:2px solid var(--line);animation:fade .3s}
+.log .me{border-left-color:var(--cyan)}.log .ai{border-left-color:var(--pink)}.log .sys{border-left-color:var(--gold);color:var(--gold)}
+.popup{position:fixed;z-index:120;padding:8px;display:flex;flex-direction:column;gap:4px;min-width:170px;animation:pop .2s}
+.popup .btn{justify-content:flex-start}
+.float{position:fixed;z-index:130;font-family:var(--font-head);font-weight:700;font-size:34px;color:var(--red);text-shadow:0 0 16px var(--red);pointer-events:none;animation:floatUp 1.2s forwards}
+@keyframes floatUp{to{transform:translateY(-80px);opacity:0}}
+.dhero{padding:40px 24px;text-align:center}
+.dhero h2{font-size:40px;line-height:1;background:linear-gradient(90deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.dhero p{color:var(--muted);max-width:560px;margin:12px auto 20px}
+.flash{position:fixed;inset:0;z-index:110;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,.35),transparent 60%);opacity:0}
+.flash.on{animation:flash .5s}
+@keyframes flash{0%{opacity:1}100%{opacity:0}}
+.result{position:fixed;inset:0;z-index:140;display:none;place-items:center;background:rgba(2,3,10,.85);backdrop-filter:blur(10px)}
+.result.on{display:grid}
+.result h2{font-size:64px;line-height:1;text-align:center}
+.result .win{color:var(--cyan);text-shadow:0 0 40px var(--cyan)}
+.result .lose{color:var(--red);text-shadow:0 0 40px var(--red)}
+
+/* ---------- Loading / error ---------- */
+#loader{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.ring{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.06);border-top-color:var(--cyan);border-right-color:var(--violet);animation:spin 1s linear infinite;box-shadow:var(--glow-cyan)}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader h2{font-size:28px}
+#loader p{color:var(--muted);font-size:14px}
+#loader .bar{width:min(360px,80vw);height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden}
+#loader .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .3s}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);z-index:150;padding:10px 18px;border-radius:999px;background:var(--glass-strong);border:1px solid var(--cyan);box-shadow:var(--glow-cyan);opacity:0;transition:all .3s;font-family:var(--font-head);font-weight:600}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.banner{padding:12px 16px;border-radius:12px;border:1px solid rgba(255,77,109,.5);background:rgba(255,77,109,.08);margin-bottom:16px;display:none;align-items:center;gap:12px;flex-wrap:wrap}
+.banner.on{display:flex}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:30px 20px}
+footer a{color:var(--cyan)}
+
+@media (max-width:900px){.duel{grid-template-columns:1fr}.dpanel{position:static;max-height:none}.modal{grid-template-columns:1fr}.modal .mimg{max-width:280px;margin:0 auto;display:block}}
+@media (max-width:600px){.hwrap{padding:10px 12px}.logo h1{font-size:16px}.grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.hc{width:64px}.zones{gap:4px}.lp{font-size:20px}main{padding:12px}.count{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+
+<div id="loader">
+  <div class="ring"></div>
+  <h2>Connexion à la base de cartes</h2>
+  <p id="loaderMsg">Appel de l'API YGOPRODeck…</p>
+  <div class="bar"><i id="loaderBar"></i></div>
+</div>
+
+<header>
+  <div class="hwrap">
+    <a class="logo" href="#" data-view="home">
+      <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3 6 6 1-4.5 4.5 1 6.5L12 17l-5.5 3 1-6.5L3 9l6-1z"/></svg></div>
+      <div><h1>YU-GI-OH! CARD DATABASE</h1><small>YGOPRODeck API v7 · FR</small></div>
+    </a>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="search" type="search" placeholder="Nom, description ou archétype…" autocomplete="off">
+    </div>
+    <div class="count"><b id="loadedCount">0</b> / <span id="totalCount">?</span> cartes</div>
+    <nav>
+      <button class="btn active" data-view="home">Accueil</button>
+      <button class="btn" data-view="collection">Collection <span class="badge" id="colBadge">0</span></button>
+      <button class="btn" data-view="deck">Deck <span class="badge" id="deckBadge">0</span></button>
+      <button class="btn" data-view="duel">Duel</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="banner" id="banner"><span id="bannerMsg"></span><button class="btn btn-sm" id="retryBtn">Réessayer</button></div>
+  <div class="progress" id="progress"><i></i></div>
+
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div class="filters glass">
+      <div class="chips" id="typeChips">
+        <button class="chip active" data-type="">Toutes</button>
+        <button class="chip" data-type="monster">Monstre</button>
+        <button class="chip" data-type="spell">Magie</button>
+        <button class="chip" data-type="trap">Piège</button>
+        <button class="chip" data-type="fusion">Fusion</button>
+        <button class="chip" data-type="synchro">Synchro</button>
+        <button class="chip" data-type="xyz">Xyz</button>
+        <button class="chip" data-type="link">Lien</button>
+        <button class="chip" data-type="ritual">Rituel</button>
+        <button class="chip" data-type="pendulum">Pendule</button>
+        <button class="chip" data-type="effect">Effet</button>
+        <button class="chip" data-type="normal">Normal</button>
+      </div>
+      <div class="chips" id="attrChips">
+        <button class="chip active" data-attr="">Tous attributs</button>
+        <button class="chip" data-attr="DARK">DARK</button>
+        <button class="chip" data-attr="LIGHT">LIGHT</button>
+        <button class="chip" data-attr="EARTH">EARTH</button>
+        <button class="chip" data-attr="WATER">WATER</button>
+        <button class="chip" data-attr="FIRE">FIRE</button>
+        <button class="chip" data-attr="WIND">WIND</button>
+        <button class="chip" data-attr="DIVINE">DIVINE</button>
+      </div>
+      <div class="frow">
+        <label>Niveau / Rang / Lien<select id="fLevel"><option value="">Tous</option></select></label>
+        <label>ATK min<input id="fAtk" type="number" min="0" step="100" placeholder="0"></label>
+        <label>DEF min<input id="fDef" type="number" min="0" step="100" placeholder="0"></label>
+        <label>Archétype<select id="fArch"><option value="">Tous</option></select></label>
+        <label>Tri<select id="fSort"><option value="name">Nom</option><option value="atk">ATK ↓</option><option value="def">DEF ↓</option><option value="level">Niveau ↓</option></select></label>
+        <button class="btn btn-sm" id="resetFilters">Réinitialiser</button>
+      </div>
+    </div>
+    <div class="results" id="results"></div>
+    <div class="grid" id="grid"></div>
+    <div class="sentinel" id="sentinel"></div>
+    <div class="loadmore" id="loadmore" style="display:none"><button class="btn" id="loadMoreBtn">Afficher plus</button></div>
+  </section>
+
+  <!-- COLLECTION -->
+  <section class="view" id="view-collection">
+    <div class="deck-head glass">
+      <h2>Ma collection</h2>
+      <div class="dstats"><span><b id="colCount">0</b> cartes possédées</span></div>
+      <button class="btn btn-danger btn-sm" id="clearCol">Vider la collection</button>
+    </div>
+    <div class="grid" id="colGrid"></div>
+  </section>
+
+  <!-- DECK -->
+  <section class="view" id="view-deck">
+    <div class="deck-head glass">
+      <h2>Deck Builder</h2>
+      <div class="dstats">
+        <span><b id="dTotal">0</b>/60</span>
+        <span>Monstres <b id="dMon">0</b></span>
+        <span>Magies <b id="dSpell">0</b></span>
+        <span>Pièges <b id="dTrap">0</b></span>
+      </div>
+      <button class="btn btn-primary btn-sm" id="saveDeck">Sauvegarder</button>
+      <button class="btn btn-sm" id="loadDeck">Charger</button>
+      <button class="btn btn-danger btn-sm" id="deleteDeck">Supprimer</button>
+    </div>
+    <div class="grid" id="deckGrid"></div>
+  </section>
+
+  <!-- DUEL -->
+  <section class="view" id="view-duel">
+    <div id="duelStart" class="dhero glass">
+      <h2>Arène de duel</h2>
+      <p>Affrontez l'IA avec de vraies cartes issues de l'API. Si votre deck contient au moins 20 cartes, il sera utilisé ; sinon un deck aléatoire de 40 cartes est généré. Moteur simplifié : les magies font piocher 1 carte, les pièges posés annulent une attaque.</p>
+      <button class="btn btn-primary" id="startDuel">Lancer le duel</button>
+    </div>
+    <div class="duel" id="duelUI" style="display:none">
+      <div class="board glass">
+        <div class="side opp">
+          <div class="pinfo"><span class="pname">Adversaire (IA)</span><span class="lp opp" id="oppLP">8000</span><div class="lpbar"><i id="oppBar" style="width:100%"></i></div><span class="pmeta" id="oppMeta"></span></div>
+          <div class="hand" id="oppHand"></div>
+          <div class="stzones" id="oppST"></div>
+          <div class="zones" id="oppZones" style="margin-top:8px"></div>
+        </div>
+        <div class="side me">
+          <div class="zones" id="myZones"></div>
+          <div class="stzones" id="myST"></div>
+          <div class="pinfo" style="margin-top:10px"><span class="pname">Vous</span><span class="lp" id="myLP">8000</span><div class="lpbar"><i id="myBar" style="width:100%"></i></div><span class="pmeta" id="myMeta"></span></div>
+          <div class="hand" id="myHand"></div>
+          <div class="dactions">
+            <span class="phase" id="phase">Tour 1 · Main Phase</span>
+            <button class="btn btn-sm" id="drawBtn">Piocher</button>
+            <button class="btn btn-sm" id="directBtn" style="display:none">Attaque directe</button>
+            <button class="btn btn-sm" id="cancelAtk" style="display:none">Annuler</button>
+            <button class="btn btn-primary btn-sm" id="endTurn">Terminer le tour</button>
+            <button class="btn btn-danger btn-sm" id="quitDuel">Abandonner</button>
+          </div>
+        </div>
+      </div>
+      <aside class="dpanel glass">
+        <h3>Journal du duel</h3>
+        <div class="log" id="log"></div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer>Données et images fournies par <a href="https://ygoprodeck.com/api-guide/" target="_blank" rel="noopener">YGOPRODeck</a>. Yu-Gi-Oh! est une marque de Konami. Page non officielle, sans but commercial.</footer>
+
+<div class="overlay" id="overlay"><div class="modal glass" id="modal"></div></div>
+<div class="flash" id="flash"></div>
+<div class="result" id="result"><div><h2 id="resultTxt"></h2><div style="text-align:center;margin-top:20px"><button class="btn btn-primary" id="resultBtn">Retour</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+/* =====================================================================
+   CONFIG & STATE
+===================================================================== */
+const API = 'https://db.ygoprodeck.com/api/v7/cardinfo.php';
+const PAGE_SIZE = 1000;          // cartes par requête API (pagination num/offset)
+const RENDER_STEP = 60;          // cartes rendues par lot (scroll progressif)
+const CACHE_NAME = 'ygo-fr-cache-v1';
+const CACHE_TTL = 24 * 3600 * 1000;
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+const state = {
+  cards: [], byId: new Map(), total: null, loading: false, loadError: false,
+  filtered: [], rendered: 0,
+  f: { q: '', type: '', attr: '', level: '', atk: '', def: '', arch: '', sort: 'name' },
+  deck: [], collection: new Set(), view: 'home'
+};
+
+/* =====================================================================
+   HELPERS
+===================================================================== */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),2200); }
+function frameClass(c){
+  const f = c.frameType || '';
+  if (f.includes('pendulum')) return 'f-pendulum';
+  return 'f-' + (['normal','effect','ritual','fusion','synchro','xyz','link','spell','trap','token','skill'].includes(f) ? f : 'effect');
+}
+const isMonster = c => !['spell','trap','skill'].includes(c.frameType);
+const isSpell = c => c.frameType === 'spell';
+const isTrap = c => c.frameType === 'trap';
+function matchType(c, t){
+  const f = c.frameType || '', ty = c.type || '';
+  switch(t){
+    case '': return true;
+    case 'monster': return isMonster(c);
+    case 'spell': return isSpell(c);
+    case 'trap': return isTrap(c);
+    case 'pendulum': return f.includes('pendulum');
+    case 'effect': return isMonster(c) && /Effect/i.test(ty);
+    case 'normal': return f === 'normal' || f === 'normal_pendulum';
+    default: return f.startsWith(t);
+  }
+}
+const levelOf = c => c.level ?? c.linkval ?? null;
+const levelLabel = c => c.frameType?.startsWith('xyz') ? 'Rang' : c.frameType?.startsWith('link') ? 'Lien' : 'Niv.';
+function attrHtml(c){ return c.attribute ? `<span class="attr attr-${esc(c.attribute)}">${esc(c.attribute)}</span>` : ''; }
+
+/* réduit chaque carte aux champs utiles (mémoire + cache) */
+function slim(c){
+  return {
+    id: c.id, name: c.name, type: c.type, frameType: c.frameType, desc: c.desc, pend_desc: c.pend_desc, monster_desc: c.monster_desc,
+    atk: c.atk, def: c.def, level: c.level, scale: c.scale, linkval: c.linkval, linkmarkers: c.linkmarkers,
+    race: c.race, attribute: c.attribute, archetype: c.archetype, humanReadableCardType: c.humanReadableCardType,
+    ygoprodeck_url: c.ygoprodeck_url,
+    card_images: (c.card_images || []).map(i => ({ id: i.id, image_url: i.image_url, image_url_small: i.image_url_small, image_url_cropped: i.image_url_cropped })),
+    card_sets: (c.card_sets || []).slice(0, 8).map(s => ({ set_name: s.set_name, set_code: s.set_code, set_rarity: s.set_rarity })),
+    banlist_info: c.banlist_info
+  };
+}
+const imgSmall = c => c.card_images?.[0]?.image_url_small || c.card_images?.[0]?.image_url || '';
+const imgFull = c => c.card_images?.[0]?.image_url || '';
+
+/* =====================================================================
+   API LOADING (pagination progressive + cache)
+===================================================================== */
+async function cachedFetchJSON(url){
+  let cache = null;
+  try { if ('caches' in window) cache = await caches.open(CACHE_NAME); } catch(e){ cache = null; }
+  const ts = Number(localStorage.getItem('ygo_cache_ts') || 0);
+  const fresh = Date.now() - ts < CACHE_TTL;
+  if (cache && fresh){
+    const hit = await cache.match(url);
+    if (hit) return hit.json();
+  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (cache){ try { await cache.put(url, res.clone()); } catch(e){} }
+  return res.json();
+}
+
+function addCards(list){
+  for (const raw of list){
+    if (state.byId.has(raw.id)) continue;
+    const c = slim(raw);
+    state.byId.set(c.id, c);
+    state.cards.push(c);
+  }
+  $('#loadedCount').textContent = state.cards.length.toLocaleString('fr-FR');
+}
+
+async function loadAll(){
+  if (state.loading) return;
+  state.loading = true; state.loadError = false;
+  $('#banner').classList.remove('on');
+  const bar = $('#loaderBar'), msg = $('#loaderMsg'), prog = $('#progress i');
+  const ts = Number(localStorage.getItem('ygo_cache_ts') || 0);
+  if (Date.now() - ts >= CACHE_TTL){ try { await caches.delete(CACHE_NAME); } catch(e){} localStorage.setItem('ygo_cache_ts', String(Date.now())); }
+
+  let offset = 0, first = true;
+  try {
+    while (true){
+      const url = `${API}?language=fr&num=${PAGE_SIZE}&offset=${offset}`;
+      msg.textContent = `Chargement des cartes ${offset + 1} à ${offset + PAGE_SIZE}…`;
+      const json = await cachedFetchJSON(url);
+      if (!json.data) throw new Error('Réponse inattendue de l\'API');
+      addCards(json.data);
+      const meta = json.meta || {};
+      if (meta.total_rows){ state.total = meta.total_rows; $('#totalCount').textContent = meta.total_rows.toLocaleString('fr-FR'); }
+      const pct = state.total ? Math.min(100, state.cards.length / state.total * 100) : 0;
+      bar.style.width = pct + '%'; prog.style.width = pct + '%';
+      if (first){ first = false; hideLoader(); buildFilterOptions(); applyFilters(); }
+      else { buildFilterOptions(); if (window.scrollY < 400 || state.view!=='home') applyFilters(true); else { state.stale = true; $('#results').textContent += ' · de nouvelles cartes sont disponibles, modifiez un filtre pour actualiser'; } }
+      if (meta.next_page_offset == null || meta.next_page_offset <= offset) break;
+      offset = meta.next_page_offset;
+    }
+    if (!state.total){ state.total = state.cards.length; $('#totalCount').textContent = state.total.toLocaleString('fr-FR'); }
+    prog.style.width = '100%'; setTimeout(()=>prog.style.opacity='0', 800);
+    toast(`${state.cards.length.toLocaleString('fr-FR')} cartes chargées`);
+  } catch(err){
+    console.error(err);
+    state.loadError = true;
+    if (first){
+      /* repli : tentative sans pagination */
+      try {
+        msg.textContent = 'Pagination indisponible, chargement complet…';
+        const json = await cachedFetchJSON(`${API}?language=fr`);
+        addCards(json.data || []);
+        state.total = state.cards.length; $('#totalCount').textContent = state.total.toLocaleString('fr-FR');
+        hideLoader(); buildFilterOptions(); applyFilters(); state.loading = false; return;
+      } catch(e2){ console.error(e2); }
+      hideLoader();
+    }
+    $('#bannerMsg').textContent = `Erreur réseau : ${err.message}. ${state.cards.length} cartes chargées. Vérifiez votre connexion ou l'accès à db.ygoprodeck.com.`;
+    $('#banner').classList.add('on');
+  }
+  state.loading = false;
+}
+function hideLoader(){ $('#loader').classList.add('hide'); }
+$('#retryBtn').addEventListener('click', loadAll);
+
+/* =====================================================================
+   FILTERS & SEARCH
+===================================================================== */
+let archBuilt = 0;
+function buildFilterOptions(){
+  if (state.cards.length === archBuilt) return;
+  archBuilt = state.cards.length;
+  const archs = new Set(), levels = new Set();
+  for (const c of state.cards){ if (c.archetype) archs.add(c.archetype); const l = levelOf(c); if (l != null) levels.add(l); }
+  const sa = $('#fArch'), cur = sa.value;
+  sa.innerHTML = '<option value="">Tous</option>' + [...archs].sort((a,b)=>a.localeCompare(b,'fr')).map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('');
+  sa.value = cur;
+  const sl = $('#fLevel'), curl = sl.value;
+  sl.innerHTML = '<option value="">Tous</option>' + [...levels].sort((a,b)=>a-b).map(l=>`<option value="${l}">${l}</option>`).join('');
+  sl.value = curl;
+}
+
+function applyFilters(keepScroll=false){
+  state.stale = false;
+  const f = state.f, q = f.q.trim().toLowerCase();
+  const atk = f.atk === '' ? null : Number(f.atk), def = f.def === '' ? null : Number(f.def), lvl = f.level === '' ? null : Number(f.level);
+  let out = state.cards.filter(c => {
+    if (!matchType(c, f.type)) return false;
+    if (f.attr && c.attribute !== f.attr) return false;
+    if (lvl != null && levelOf(c) !== lvl) return false;
+    if (atk != null && !(typeof c.atk === 'number' && c.atk >= atk)) return false;
+    if (def != null && !(typeof c.def === 'number' && c.def >= def)) return false;
+    if (f.arch && c.archetype !== f.arch) return false;
+    if (q){
+      const name = c.name.toLowerCase();
+      if (name.includes(q)) return true;
+      if (c.archetype && c.archetype.toLowerCase().includes(q)) return true;
+      if (c.desc && c.desc.toLowerCase().includes(q)) return true;
+      return false;
+    }
+    return true;
+  });
+  const num = v => typeof v === 'number' ? v : -1;
+  if (f.sort === 'atk') out.sort((a,b)=>num(b.atk)-num(a.atk));
+  else if (f.sort === 'def') out.sort((a,b)=>num(b.def)-num(a.def));
+  else if (f.sort === 'level') out.sort((a,b)=>num(levelOf(b))-num(levelOf(a)));
+  else if (q) out.sort((a,b)=>{ const an=a.name.toLowerCase().startsWith(q), bn=b.name.toLowerCase().startsWith(q); return an===bn ? a.name.localeCompare(b.name,'fr') : (an?-1:1); });
+  else out.sort((a,b)=>a.name.localeCompare(b.name,'fr'));
+  state.filtered = out;
+  $('#results').textContent = `${out.length.toLocaleString('fr-FR')} carte${out.length>1?'s':''} correspondante${out.length>1?'s':''}`;
+  const prev = state.rendered;
+  $('#grid').innerHTML = ''; state.rendered = 0;
+  renderMore(keepScroll ? Math.max(RENDER_STEP, prev) : RENDER_STEP);
+}
+
+function cardHTML(c, extra=''){
+  const own = state.collection.has(c.id);
+  const lv = levelOf(c);
+  return `<article class="card ${frameClass(c)}" data-id="${c.id}" tabindex="0">
+    <img loading="lazy" src="${esc(imgSmall(c))}" alt="${esc(c.name)}">
+    <button class="own ${own?'on':''}" title="Collection" data-own="${c.id}">${own?'✓':'+'}</button>
+    ${extra}
+    <div class="cb">
+      <div class="cn" title="${esc(c.name)}">${esc(c.name)}</div>
+      <div class="ct">${esc(c.humanReadableCardType || c.type)}${c.race ? ' · ' + esc(c.race) : ''}</div>
+      <div class="cs">
+        <span>${attrHtml(c)}${lv != null ? ` <span class="lv">★${lv}</span>` : ''}</span>
+        ${isMonster(c) && c.frameType!=='skill' ? `<span><span class="atk">${c.atk ?? '?'}</span> / <span class="def">${c.linkval != null ? '–' : (c.def ?? '?')}</span></span>` : ''}
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderMore(n=RENDER_STEP){
+  const slice = state.filtered.slice(state.rendered, state.rendered + n);
+  if (!slice.length && state.rendered === 0){
+    $('#grid').innerHTML = `<div class="empty" style="grid-column:1/-1"><b>Aucune carte</b>Modifiez la recherche ou les filtres.</div>`;
+  }
+  const frag = document.createElement('template');
+  frag.innerHTML = slice.map(c => cardHTML(c, `<button class="add" data-add="${c.id}">+ Deck</button>`)).join('');
+  $('#grid').appendChild(frag.content);
+  state.rendered += slice.length;
+  $('#loadmore').style.display = state.rendered < state.filtered.length ? 'flex' : 'none';
+}
+$('#loadMoreBtn').addEventListener('click', ()=>renderMore());
+new IntersectionObserver(es => { if (es[0].isIntersecting && state.view==='home' && state.rendered < state.filtered.length) renderMore(); }, { rootMargin:'600px' }).observe($('#sentinel'));
+
+let searchT;
+$('#search').addEventListener('input', e => { clearTimeout(searchT); searchT = setTimeout(()=>{ state.f.q = e.target.value; showView('home'); applyFilters(); }, 180); });
+$('#typeChips').addEventListener('click', e => { const b = e.target.closest('.chip'); if(!b) return; $$('#typeChips .chip').forEach(x=>x.classList.remove('active')); b.classList.add('active'); state.f.type = b.dataset.type; applyFilters(); });
+$('#attrChips').addEventListener('click', e => { const b = e.target.closest('.chip'); if(!b) return; $$('#attrChips .chip').forEach(x=>x.classList.remove('active')); b.classList.add('active'); state.f.attr = b.dataset.attr; applyFilters(); });
+[['#fLevel','level'],['#fAtk','atk'],['#fDef','def'],['#fArch','arch'],['#fSort','sort']].forEach(([sel,key])=>{
+  $(sel).addEventListener('input', e => { state.f[key] = e.target.value; applyFilters(); });
+});
+$('#resetFilters').addEventListener('click', ()=>{
+  state.f = { q:'', type:'', attr:'', level:'', atk:'', def:'', arch:'', sort:'name' };
+  $('#search').value=''; $('#fLevel').value=''; $('#fAtk').value=''; $('#fDef').value=''; $('#fArch').value=''; $('#fSort').value='name';
+  $$('.chip').forEach(x=>x.classList.toggle('active', x.dataset.type==='' || x.dataset.attr===''));
+  applyFilters();
+});
+
+/* effet 3D au survol (délégation) */
+document.addEventListener('mousemove', e => {
+  const card = e.target.closest('.card'); if (!card) return;
+  const r = card.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+  card.style.setProperty('--ry', (x * 18) + 'deg'); card.style.setProperty('--rx', (-y * 18) + 'deg');
+});
+document.addEventListener('mouseout', e => { const card = e.target.closest('.card'); if (card && !card.contains(e.relatedTarget)){ card.style.setProperty('--rx','0deg'); card.style.setProperty('--ry','0deg'); } });
+
+/* clics sur les cartes (grille, collection, deck) */
+document.addEventListener('click', e => {
+  const add = e.target.closest('[data-add]'); if (add){ e.stopPropagation(); addToDeck(Number(add.dataset.add)); return; }
+  const rm = e.target.closest('[data-rm]'); if (rm){ e.stopPropagation(); removeFromDeck(Number(rm.dataset.rm)); return; }
+  const own = e.target.closest('[data-own]'); if (own){ e.stopPropagation(); toggleCollection(Number(own.dataset.own)); return; }
+  const card = e.target.closest('.card[data-id]'); if (card) openModal(Number(card.dataset.id));
+});
+document.addEventListener('keydown', e => { if (e.key==='Enter'){ const card = e.target.closest?.('.card[data-id]'); if (card) openModal(Number(card.dataset.id)); } if (e.key==='Escape') closeModal(); });
+
+/* =====================================================================
+   MODAL
+===================================================================== */
+function openModal(id){
+  const c = state.byId.get(id); if (!c) return;
+  const lv = levelOf(c);
+  const stats = [];
+  if (isMonster(c) && c.frameType!=='skill'){
+    if (lv != null) stats.push([levelLabel(c), lv]);
+    stats.push(['ATK', c.atk ?? '?']);
+    if (c.linkval == null) stats.push(['DEF', c.def ?? '?']);
+    if (c.scale != null) stats.push(['Échelle', c.scale]);
+  }
+  const alts = c.card_images || [];
+  const extra = [];
+  if (c.archetype) extra.push(['Archétype', c.archetype]);
+  if (c.race) extra.push([isMonster(c) ? 'Type de monstre' : 'Catégorie', c.race]);
+  if (c.linkmarkers?.length) extra.push(['Flèches Lien', c.linkmarkers.join(', ')]);
+  if (c.banlist_info){ const b=c.banlist_info; extra.push(['Banlist', ['TCG: '+(b.ban_tcg||'—'),'OCG: '+(b.ban_ocg||'—')].join(' · ')]); }
+  if (c.card_sets?.length) extra.push(['Sets', c.card_sets.map(s=>`${s.set_code} (${s.set_rarity})`).join(', ')]);
+  extra.push(['ID', c.id]);
+  const inDeck = state.deck.filter(x=>x===c.id).length;
+  $('#modal').className = 'modal glass ' + frameClass(c);
+  $('#modal').innerHTML = `
+    <button class="close" id="mclose" aria-label="Fermer">✕</button>
+    <div>
+      <img class="mimg" id="mimg" src="${esc(imgFull(c))}" alt="${esc(c.name)}">
+      ${alts.length > 1 ? `<div class="alts">${alts.map((a,i)=>`<img src="${esc(a.image_url_small||a.image_url)}" data-full="${esc(a.image_url)}" class="${i===0?'on':''}" alt="Illustration ${i+1}">`).join('')}</div>` : ''}
+    </div>
+    <div class="mbody">
+      <h2>${esc(c.name)}</h2>
+      <div class="tags">
+        <span class="tag">${esc(c.humanReadableCardType || c.type)}</span>
+        ${c.attribute ? `<span class="tag attr-${esc(c.attribute)}">${esc(c.attribute)}</span>` : ''}
+        ${c.race ? `<span class="tag">${esc(c.race)}</span>` : ''}
+        ${c.archetype ? `<span class="tag">${esc(c.archetype)}</span>` : ''}
+      </div>
+      ${stats.length ? `<div class="stats">${stats.map(([k,v])=>`<div class="stat"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}</div>` : ''}
+      <div class="desc">${esc(c.frameType?.includes('pendulum') && c.monster_desc ? c.monster_desc : c.desc)}</div>
+      ${c.pend_desc ? `<div class="pend"><b>Effet Pendule :</b>\n${esc(c.pend_desc)}</div>` : ''}
+      <div class="extra">${extra.map(([k,v])=>`<div><b>${k}</b> : ${esc(v)}</div>`).join('')}</div>
+      <div class="mact">
+        <button class="btn btn-primary btn-sm" data-add="${c.id}">Ajouter au deck${inDeck?` (${inDeck})`:''}</button>
+        ${inDeck ? `<button class="btn btn-danger btn-sm" data-rm="${c.id}">Retirer du deck</button>` : ''}
+        <button class="btn btn-sm" data-own="${c.id}">${state.collection.has(c.id)?'Retirer de la collection':'Ajouter à la collection'}</button>
+        ${c.ygoprodeck_url ? `<a class="btn btn-sm" href="${esc(c.ygoprodeck_url)}" target="_blank" rel="noopener">Fiche YGOPRODeck</a>` : ''}
+      </div>
+    </div>`;
+  $('#overlay').classList.add('open');
+  $('#mclose').onclick = closeModal;
+  $$('#modal .alts img').forEach(im => im.addEventListener('click', ()=>{ $('#mimg').src = im.dataset.full; $$('#modal .alts img').forEach(x=>x.classList.remove('on')); im.classList.add('on'); }));
+  $('#modal').dataset.id = id;
+}
+function closeModal(){ $('#overlay').classList.remove('open'); }
+$('#overlay').addEventListener('click', e => { if (e.target === $('#overlay')) closeModal(); });
+
+/* =====================================================================
+   VIEWS
+===================================================================== */
+function showView(v){
+  state.view = v;
+  $$('.view').forEach(x=>x.classList.toggle('active', x.id === 'view-'+v));
+  $$('nav .btn').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+  if (v==='collection') renderCollection();
+  if (v==='deck') renderDeck();
+  window.scrollTo({top:0});
+}
+$$('[data-view]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); showView(el.dataset.view); }));
+
+/* =====================================================================
+   COLLECTION (localStorage)
+===================================================================== */
+function loadCollection(){ try { state.collection = new Set(JSON.parse(localStorage.getItem('ygo_collection')||'[]')); } catch(e){ state.collection = new Set(); } updateBadges(); }
+function saveCollection(){ localStorage.setItem('ygo_collection', JSON.stringify([...state.collection])); updateBadges(); }
+function toggleCollection(id){
+  if (state.collection.has(id)){ state.collection.delete(id); toast('Retirée de la collection'); } else { state.collection.add(id); toast('Ajoutée à la collection'); }
+  saveCollection();
+  $$(`[data-own="${id}"]`).forEach(b => { if (b.classList.contains('own')){ b.classList.toggle('on', state.collection.has(id)); b.textContent = state.collection.has(id)?'✓':'+'; } else b.textContent = state.collection.has(id)?'Retirer de la collection':'Ajouter à la collection'; });
+  if (state.view==='collection') renderCollection();
+}
+function renderCollection(){
+  const cards = [...state.collection].map(id=>state.byId.get(id)).filter(Boolean).sort((a,b)=>a.name.localeCompare(b.name,'fr'));
+  $('#colCount').textContent = cards.length;
+  $('#colGrid').innerHTML = cards.length ? cards.map(c=>cardHTML(c, `<button class="add" data-add="${c.id}">+ Deck</button>`)).join('') : `<div class="empty" style="grid-column:1/-1"><b>Collection vide</b>Cliquez sur « + » sur une carte pour la marquer comme possédée.</div>`;
+}
+$('#clearCol').addEventListener('click', ()=>{ if (confirm('Vider la collection ?')){ state.collection.clear(); saveCollection(); renderCollection(); } });
+
+/* =====================================================================
+   DECK BUILDER (localStorage)
+===================================================================== */
+function updateBadges(){ $('#deckBadge').textContent = state.deck.length; $('#colBadge').textContent = state.collection.size; }
+function addToDeck(id){
+  const c = state.byId.get(id); if (!c) return;
+  if (state.deck.length >= 60) return toast('Deck plein (60 cartes max)');
+  if (state.deck.filter(x=>x===id).length >= 3) return toast('Maximum 3 exemplaires');
+  state.deck.push(id); updateBadges(); toast(`${c.name} ajoutée au deck (${state.deck.length})`);
+  if (state.view==='deck') renderDeck();
+  if ($('#overlay').classList.contains('open') && Number($('#modal').dataset.id)===id) openModal(id);
+}
+function removeFromDeck(id){
+  const i = state.deck.indexOf(id); if (i<0) return;
+  state.deck.splice(i,1); updateBadges(); toast('Carte retirée du deck');
+  if (state.view==='deck') renderDeck();
+  if ($('#overlay').classList.contains('open') && Number($('#modal').dataset.id)===id) openModal(id);
+}
+function renderDeck(){
+  const counts = new Map(); state.deck.forEach(id=>counts.set(id,(counts.get(id)||0)+1));
+  const cards = [...counts.keys()].map(id=>state.byId.get(id)).filter(Boolean).sort((a,b)=>{ const o=x=>isMonster(x)?0:isSpell(x)?1:2; return o(a)-o(b) || a.name.localeCompare(b.name,'fr'); });
+  const dc = state.deck.map(id=>state.byId.get(id)).filter(Boolean);
+  $('#dTotal').textContent = state.deck.length; $('#dMon').textContent = dc.filter(isMonster).length; $('#dSpell').textContent = dc.filter(isSpell).length; $('#dTrap').textContent = dc.filter(isTrap).length;
+  $('#deckGrid').innerHTML = cards.length ? cards.map(c=>cardHTML(c, `<span class="qty">×${counts.get(c.id)}</span><button class="rm" data-rm="${c.id}">− Retirer</button>`)).join('') : `<div class="empty" style="grid-column:1/-1"><b>Deck vide</b>Ajoutez des cartes depuis l'accueil (bouton « + Deck »).</div>`;
+}
+$('#saveDeck').addEventListener('click', ()=>{ localStorage.setItem('ygo_deck', JSON.stringify(state.deck)); toast('Deck sauvegardé'); });
+$('#loadDeck').addEventListener('click', ()=>{
+  const s = localStorage.getItem('ygo_deck'); if (!s) return toast('Aucun deck sauvegardé');
+  try { state.deck = JSON.parse(s).filter(id=>state.byId.has(id)); updateBadges(); renderDeck(); toast(`Deck chargé (${state.deck.length} cartes)`); } catch(e){ toast('Deck illisible'); }
+});
+$('#deleteDeck').addEventListener('click', ()=>{ if (confirm('Supprimer le deck sauvegardé et vider le deck actuel ?')){ localStorage.removeItem('ygo_deck'); state.deck=[]; updateBadges(); renderDeck(); toast('Deck supprimé'); } });
+
+/* =====================================================================
+   DUEL ENGINE (simplifié)
+===================================================================== */
+const D = { on:false };
+const shuffle = a => { for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const playable = c => isMonster(c) ? (typeof c.atk==='number' && c.frameType!=='token' && c.frameType!=='skill') : (isSpell(c)||isTrap(c));
+function randomDeck(n=40){
+  const pool = state.cards.filter(playable);
+  const mons = shuffle(pool.filter(c=>isMonster(c) && !['fusion','synchro','xyz','link'].some(k=>c.frameType.startsWith(k)))).slice(0, Math.round(n*.65));
+  const sp = shuffle(pool.filter(isSpell)).slice(0, Math.round(n*.2));
+  const tr = shuffle(pool.filter(isTrap)).slice(0, n - mons.length - sp.length);
+  return shuffle([...mons,...sp,...tr].map(c=>c.id));
+}
+function newPlayer(deckIds){ return { lp:8000, deck:shuffle([...deckIds]), hand:[], field:Array(5).fill(null), st:Array(5).fill(null), grave:[], summoned:false, drawn:false }; }
+function log(msg, cls='sys'){ const l=$('#log'); const d=document.createElement('div'); d.className=cls; d.textContent=msg; l.prepend(d); }
+
+function startDuel(){
+  if (state.cards.length < 100) return toast('Attendez que plus de cartes soient chargées');
+  const myIds = state.deck.length >= 20 ? state.deck.filter(id=>playable(state.byId.get(id))) : randomDeck();
+  if (myIds.length < 20){ toast('Deck trop petit après filtrage, deck aléatoire utilisé'); }
+  D.me = newPlayer(myIds.length>=20 ? myIds : randomDeck());
+  D.ai = newPlayer(randomDeck());
+  D.turn = 1; D.current = 'me'; D.on = true; D.selected = null; D.busy = false;
+  $('#log').innerHTML=''; $('#duelStart').style.display='none'; $('#duelUI').style.display='grid';
+  log(`Duel lancé. ${D.me.deck.length} cartes dans votre deck, ${D.ai.deck.length} pour l'IA.`);
+  for (let i=0;i<5;i++){ draw(D.me,true); draw(D.ai,true); }
+  D.me.drawn = false;
+  renderDuel();
+}
+function draw(p, silent=false){
+  if (!p.deck.length){ endDuel(p===D.me?'lose':'win', 'plus de cartes à piocher'); return false; }
+  const id = p.deck.pop(); p.hand.push(id); p.drawn = true;
+  if (!silent) log(`${p===D.me?'Vous piochez':'L\'IA pioche'} une carte.`, p===D.me?'me':'ai');
+  return true;
+}
+function tributesNeeded(c){ const l = c.level || 0; return l>=7 ? 2 : l>=5 ? 1 : 0; }
+function canSummon(p, c){ if (p.summoned) return false; const need = tributesNeeded(c); return p.field.filter(Boolean).length >= need && (need>0 || p.field.some(z=>!z)); }
+function summon(p, handIdx, pos='atk'){
+  const c = state.byId.get(p.hand[handIdx]); const need = tributesNeeded(c);
+  if (need){ /* sacrifie les plus faibles */
+    const idx = p.field.map((z,i)=>z?{i,atk:state.byId.get(z.id).atk||0}:null).filter(Boolean).sort((a,b)=>a.atk-b.atk).slice(0,need);
+    idx.forEach(({i})=>{ p.grave.push(p.field[i].id); log(`${state.byId.get(p.field[i].id).name} est sacrifié.`, p===D.me?'me':'ai'); p.field[i]=null; });
+  }
+  const zone = p.field.indexOf(null); if (zone<0) return false;
+  p.hand.splice(handIdx,1);
+  p.field[zone] = { id:c.id, pos, canAttack: pos==='atk', anim:'summoning', turnSet: D.turn };
+  p.summoned = true;
+  log(`${p===D.me?'Vous invoquez':'L\'IA invoque'} ${c.name} en position ${pos==='atk'?'d\'attaque':'de défense'} (ATK ${c.atk} / DEF ${c.def}).`, p===D.me?'me':'ai');
+  $('#flash').classList.remove('on'); void $('#flash').offsetWidth; $('#flash').classList.add('on');
+  return true;
+}
+function activateSpell(p, handIdx){
+  const c = state.byId.get(p.hand[handIdx]); p.hand.splice(handIdx,1); p.grave.push(c.id);
+  log(`${p===D.me?'Vous activez':'L\'IA active'} ${c.name} : pioche d'une carte.`, p===D.me?'me':'ai');
+  draw(p, true);
+}
+function setTrap(p, handIdx){
+  const zone = p.st.indexOf(null); if (zone<0) return false;
+  const id = p.hand[handIdx]; p.hand.splice(handIdx,1); p.st[zone] = { id };
+  log(`${p===D.me?'Vous posez':'L\'IA pose'} une carte face verso.`, p===D.me?'me':'ai');
+  return true;
+}
+function damage(p, n){
+  p.lp = Math.max(0, p.lp - n);
+  const el = p===D.me ? $('#myLP') : $('#oppLP');
+  el.classList.remove('hit'); void el.offsetWidth; el.classList.add('hit');
+  const r = el.getBoundingClientRect(); const f = document.createElement('div'); f.className='float'; f.textContent=`-${n}`; f.style.left=r.left+'px'; f.style.top=r.top+'px'; document.body.appendChild(f); setTimeout(()=>f.remove(),1200);
+  if (p.lp <= 0) setTimeout(()=>endDuel(p===D.me?'lose':'win', 'LP à 0'), 700);
+}
+async function battle(attacker, aZone, defender, dZone){
+  const A = attacker.field[aZone], ac = state.byId.get(A.id);
+  const who = attacker===D.me ? 'me' : 'ai';
+  A.canAttack = false;
+  /* piège posé chez le défenseur ? */
+  const trapIdx = defender.st.findIndex(Boolean);
+  if (trapIdx >= 0){
+    const t = state.byId.get(defender.st[trapIdx].id); defender.st[trapIdx]=null; defender.grave.push(t.id);
+    log(`${defender===D.me?'Vous activez':'L\'IA active'} le piège ${t.name} : l'attaque de ${ac.name} est annulée !`, defender===D.me?'me':'ai');
+    renderDuel(); return;
+  }
+  await animateAttack(attacker, aZone, defender, dZone);
+  if (dZone == null){
+    log(`${ac.name} attaque directement : ${ac.atk} dégâts.`, who);
+    damage(defender, ac.atk);
+  } else {
+    const Dm = defender.field[dZone], dc = state.byId.get(Dm.id);
+    if (Dm.pos === 'atk'){
+      if (ac.atk > dc.atk){ log(`${ac.name} détruit ${dc.name} (${ac.atk} vs ${dc.atk}).`, who); defender.field[dZone]=null; defender.grave.push(dc.id); damage(defender, ac.atk-dc.atk); }
+      else if (ac.atk < dc.atk){ log(`${ac.name} est détruit par ${dc.name} (${ac.atk} vs ${dc.atk}).`, who); attacker.field[aZone]=null; attacker.grave.push(ac.id); damage(attacker, dc.atk-ac.atk); }
+      else { log(`${ac.name} et ${dc.name} se détruisent mutuellement.`, who); attacker.field[aZone]=null; defender.field[dZone]=null; attacker.grave.push(ac.id); defender.grave.push(dc.id); }
+    } else {
+      Dm.faceup = true;
+      if (ac.atk > dc.def){ log(`${ac.name} détruit ${dc.name} en défense (${ac.atk} vs DEF ${dc.def}).`, who); defender.field[dZone]=null; defender.grave.push(dc.id); }
+      else if (ac.atk < dc.def){ log(`${ac.name} rebondit sur ${dc.name} (DEF ${dc.def}) : ${dc.def-ac.atk} dégâts.`, who); damage(attacker, dc.def-ac.atk); }
+      else log(`${ac.name} attaque ${dc.name} : aucun effet.`, who);
+    }
+  }
+  renderDuel();
+}
+function animateAttack(attacker, aZone, defender, dZone){
+  return new Promise(res=>{
+    const from = (attacker===D.me?$('#myZones'):$('#oppZones')).children[aZone]?.querySelector('.fc');
+    const toEl = dZone==null ? (defender===D.me?$('#myLP'):$('#oppLP')) : (defender===D.me?$('#myZones'):$('#oppZones')).children[dZone];
+    if (!from || !toEl) return res();
+    const a = from.getBoundingClientRect(), b = toEl.getBoundingClientRect();
+    from.style.setProperty('--dx', (b.left+b.width/2-a.left-a.width/2)+'px'); from.style.setProperty('--dy', (b.top+b.height/2-a.top-a.height/2)+'px');
+    from.classList.add('attacking'); setTimeout(res, 650);
+  });
+}
+function endDuel(result, reason){
+  if (!D.on) return; D.on = false;
+  $('#resultTxt').className = result==='win'?'win':'lose';
+  $('#resultTxt').textContent = result==='win' ? 'VICTOIRE' : 'DÉFAITE';
+  log(`Fin du duel (${reason}).`);
+  $('#result').classList.add('on');
+}
+$('#resultBtn').addEventListener('click', ()=>{ $('#result').classList.remove('on'); $('#duelUI').style.display='none'; $('#duelStart').style.display='block'; });
+$('#quitDuel').addEventListener('click', ()=>{ if (confirm('Abandonner le duel ?')){ D.on=false; $('#duelUI').style.display='none'; $('#duelStart').style.display='block'; } });
+$('#startDuel').addEventListener('click', startDuel);
+
+/* ---------- rendu du plateau ---------- */
+function fieldCardHTML(z, mine){
+  const c = state.byId.get(z.id);
+  const cls = ['fc', frameClass(c), z.pos==='def'?'def':'', z.anim||'', mine && z.canAttack && D.current==='me' && z.pos==='atk' ? 'ready':'', mine && D.selected===z ? 'selected':'', mine && !z.canAttack && z.pos==='atk' && D.current==='me' ? 'used':''].join(' ');
+  return `<div class="${cls}" title="${esc(c.name)}"><img src="${esc(imgSmall(c))}" alt="${esc(c.name)}"><div class="fs">${z.pos==='atk'?'ATK '+c.atk:'DEF '+c.def}</div></div>`;
+}
+function renderDuel(){
+  if (!D.on) return;
+  const me = D.me, ai = D.ai;
+  $('#myLP').textContent = me.lp; $('#oppLP').textContent = ai.lp;
+  $('#myBar').style.width = (me.lp/80)+'%'; $('#oppBar').style.width = (ai.lp/80)+'%';
+  $('#myMeta').textContent = `Deck ${me.deck.length} · Cimetière ${me.grave.length}`; $('#oppMeta').textContent = `Deck ${ai.deck.length} · Cimetière ${ai.grave.length} · Main ${ai.hand.length}`;
+  $('#phase').textContent = `Tour ${D.turn} · ${D.current==='me'?'Votre tour':'Tour de l\'IA'}${D.selected?' · choisissez une cible':''}`;
+  const attacking = !!D.selected;
+  $('#myZones').innerHTML = me.field.map((z,i)=>`<div class="zone" data-z="${i}">${z?fieldCardHTML(z,true):'<span class="zl">M'+(i+1)+'</span>'}</div>`).join('');
+  $('#oppZones').innerHTML = ai.field.map((z,i)=>`<div class="zone ${attacking && z ? 'target':''}" data-oz="${i}">${z?fieldCardHTML(z,false):'<span class="zl">M'+(i+1)+'</span>'}</div>`).join('');
+  $('#myST').innerHTML = me.st.map(z=>`<div class="zone">${z?`<div class="fc f-trap facedown" title="Piège posé"><img src="${esc(imgSmall(state.byId.get(z.id)))}" alt=""></div>`:''}</div>`).join('');
+  $('#oppST').innerHTML = ai.st.map(z=>`<div class="zone">${z?`<div class="fc f-trap facedown" title="Carte face verso"></div>`:''}</div>`).join('');
+  $('#oppHand').innerHTML = ai.hand.map(()=>`<div class="hc opp"><img alt=""></div>`).join('');
+  $('#myHand').innerHTML = me.hand.map((id,i)=>{ const c=state.byId.get(id); const ok = D.current==='me' && !D.busy && (isMonster(c)?canSummon(me,c):isSpell(c)?true:me.st.some(z=>!z)); return `<div class="hc ${frameClass(c)} ${ok?'':'disabled'}" data-h="${i}" title="${esc(c.name)}"><img src="${esc(imgSmall(c))}" alt="${esc(c.name)}"></div>`; }).join('');
+  $('#drawBtn').disabled = D.current!=='me' || me.drawn || D.busy;
+  $('#endTurn').disabled = D.current!=='me' || D.busy;
+  $('#directBtn').style.display = attacking && !ai.field.some(Boolean) ? '' : 'none';
+  $('#cancelAtk').style.display = attacking ? '' : 'none';
+  me.field.forEach(z=>{ if (z) z.anim=''; }); ai.field.forEach(z=>{ if (z) z.anim=''; });
+}
+
+/* ---------- interactions joueur ---------- */
+let popup = null;
+function closePopup(){ if (popup){ popup.remove(); popup=null; } }
+document.addEventListener('click', e => { if (popup && !popup.contains(e.target)) closePopup(); });
+$('#myHand').addEventListener('click', e => {
+  const h = e.target.closest('.hc'); if (!h || h.classList.contains('disabled') || D.current!=='me' || D.busy) return;
+  e.stopPropagation(); closePopup();
+  const i = Number(h.dataset.h), c = state.byId.get(D.me.hand[i]);
+  popup = document.createElement('div'); popup.className='popup glass';
+  const r = h.getBoundingClientRect();
+  popup.style.left = Math.min(r.left, innerWidth-190)+'px'; popup.style.top = Math.max(8, r.top-140)+'px';
+  const need = tributesNeeded(c);
+  popup.innerHTML = `<div style="font-family:var(--font-head);font-weight:700;padding:4px 8px">${esc(c.name)}</div>` + (isMonster(c)
+    ? `<button class="btn btn-sm" data-act="atk">Invoquer (ATK)${need?` – ${need} sacrifice${need>1?'s':''}`:''}</button><button class="btn btn-sm" data-act="def">Poser (DEF)</button>`
+    : isSpell(c) ? `<button class="btn btn-sm" data-act="spell">Activer</button>` : `<button class="btn btn-sm" data-act="trap">Poser face verso</button>`) + `<button class="btn btn-sm" data-act="view">Voir la carte</button>`;
+  popup.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-act]'); if (!b) return;
+    const act = b.dataset.act; closePopup();
+    if (act==='view') return openModal(c.id);
+    if (act==='atk') summon(D.me, i, 'atk'); else if (act==='def') summon(D.me, i, 'def'); else if (act==='spell') activateSpell(D.me, i); else if (act==='trap') setTrap(D.me, i);
+    renderDuel();
+  });
+  document.body.appendChild(popup);
+});
+$('#myZones').addEventListener('click', e => {
+  const z = e.target.closest('.zone'); if (!z || D.current!=='me' || D.busy) return;
+  const i = Number(z.dataset.z), m = D.me.field[i]; if (!m) return;
+  if (D.selected === m){ D.selected = null; }
+  else if (m.pos==='atk' && m.canAttack){ D.selected = m; D.selectedZone = i; }
+  else if (m.pos==='def'){ if (confirm('Passer en position d\'attaque ?')){ m.pos='atk'; m.canAttack = m.turnSet !== D.turn ? true : m.canAttack; } }
+  else toast('Ce monstre a déjà attaqué');
+  renderDuel();
+});
+$('#oppZones').addEventListener('click', async e => {
+  const z = e.target.closest('.zone'); if (!z || !D.selected || D.busy) return;
+  const i = Number(z.dataset.oz); if (!D.ai.field[i]) return;
+  D.busy = true; const az = D.selectedZone; D.selected = null; renderDuel();
+  await battle(D.me, az, D.ai, i); D.busy = false; renderDuel();
+});
+$('#directBtn').addEventListener('click', async ()=>{
+  if (!D.selected || D.busy) return; D.busy = true; const az = D.selectedZone; D.selected=null; renderDuel();
+  await battle(D.me, az, D.ai, null); D.busy=false; renderDuel();
+});
+$('#cancelAtk').addEventListener('click', ()=>{ D.selected=null; renderDuel(); });
+$('#drawBtn').addEventListener('click', ()=>{ if (D.current==='me' && !D.me.drawn){ draw(D.me); renderDuel(); } });
+$('#endTurn').addEventListener('click', async ()=>{
+  if (D.current!=='me' || D.busy) return;
+  D.selected=null; D.current='ai'; D.busy=true; renderDuel(); log('Vous terminez votre tour.', 'me');
+  await aiTurn();
+  if (!D.on) return;
+  D.turn++; D.current='me'; D.me.summoned=false; D.me.drawn=false; D.me.field.forEach(z=>{ if(z) z.canAttack = z.pos==='atk'; });
+  draw(D.me); D.busy=false; renderDuel();
+});
+
+/* ---------- IA ---------- */
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+async function aiTurn(){
+  const ai = D.ai, me = D.me;
+  ai.summoned=false; ai.field.forEach(z=>{ if(z) z.canAttack = z.pos==='atk'; });
+  await wait(500); if (!draw(ai)) return; renderDuel(); await wait(600);
+  /* magies */
+  for (let i=ai.hand.length-1;i>=0;i--){ if (isSpell(state.byId.get(ai.hand[i]))){ activateSpell(ai,i); renderDuel(); await wait(500); } }
+  /* invocation du meilleur monstre invocable */
+  const opts = ai.hand.map((id,i)=>({i,c:state.byId.get(id)})).filter(o=>isMonster(o.c)&&canSummon(ai,o.c));
+  if (opts.length){
+    const fieldAtk = ai.field.filter(Boolean).map(z=>state.byId.get(z.id).atk||0);
+    opts.sort((a,b)=>(b.c.atk||0)-(a.c.atk||0));
+    const best = opts.find(o=>{ const need=tributesNeeded(o.c); if(!need) return true; const sacrificed=[...fieldAtk].sort((x,y)=>x-y).slice(0,need).reduce((s,v)=>s+v,0); return (o.c.atk||0) > sacrificed + 300; }) || opts.find(o=>!tributesNeeded(o.c));
+    if (best){ const strongestOpp = Math.max(0,...me.field.filter(Boolean).map(z=>state.byId.get(z.id).atk||0)); summon(ai, best.i, (best.c.atk||0) >= strongestOpp || !me.field.some(Boolean) ? 'atk' : 'def'); renderDuel(); await wait(900); }
+  }
+  /* pièges */
+  for (let i=ai.hand.length-1;i>=0;i--){ if (isTrap(state.byId.get(ai.hand[i])) && ai.st.some(z=>!z)){ setTrap(ai,i); renderDuel(); await wait(400); } }
+  /* attaques */
+  for (let z=0; z<5 && D.on; z++){
+    const m = ai.field[z]; if (!m || m.pos!=='atk' || !m.canAttack) continue;
+    const atk = state.byId.get(m.id).atk||0;
+    const targets = me.field.map((t,i)=>t?{i,t,c:state.byId.get(t.id)}:null).filter(Boolean);
+    if (!targets.length){ await battle(ai, z, me, null); await wait(600); continue; }
+    const beatable = targets.filter(o=> o.t.pos==='atk' ? atk > (o.c.atk||0) : atk > (o.c.def||0)).sort((a,b)=>(b.c.atk||0)-(a.c.atk||0));
+    if (beatable.length){ await battle(ai, z, me, beatable[0].i); await wait(600); }
+  }
+  log('L\'IA termine son tour.', 'ai');
+}
+
+/* =====================================================================
+   PARTICULES
+===================================================================== */
+(function(){
+  const cv = $('#particles'), ctx = cv.getContext('2d'); let W,H,P=[];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function resize(){ W=cv.width=innerWidth; H=cv.height=innerHeight; P=Array.from({length: reduce?0:Math.min(90, W/14)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.8+.4,vx:(Math.random()-.5)*.25,vy:-Math.random()*.35-.05,c:['25,230,255','138,61,255','43,107,255'][Math.random()*3|0],a:Math.random()})); }
+  addEventListener('resize', resize); resize();
+  (function tick(){ ctx.clearRect(0,0,W,H); for (const p of P){ p.x+=p.vx; p.y+=p.vy; p.a+=.01; if (p.y<-10){p.y=H+10;p.x=Math.random()*W;} if(p.x<0)p.x=W; if(p.x>W)p.x=0; const al=.25+.35*Math.abs(Math.sin(p.a)); ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fillStyle=`rgba(${p.c},${al})`; ctx.shadowBlur=8; ctx.shadowColor=`rgba(${p.c},.8)`; ctx.fill(); } if(!reduce) requestAnimationFrame(tick); })();
+})();
+
+/* =====================================================================
+   INIT
+===================================================================== */
+loadCollection();
+try { const s = localStorage.getItem('ygo_deck'); if (s) state._pendingDeck = JSON.parse(s); } catch(e){}
+loadAll().then(()=>{ if (state._pendingDeck){ state.deck = state._pendingDeck.filter(id=>state.byId.has(id)); updateBadges(); if (state.deck.length) toast(`Deck sauvegardé chargé (${state.deck.length} cartes)`); } });
+</script>
+</body>
+</html>
